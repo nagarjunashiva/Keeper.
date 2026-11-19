@@ -289,10 +289,24 @@ export function AuthPortal({ onAuthenticated, onClose, promptReason }: AuthPorta
     }
   };
 
+  // Lock body scroll while modal is active
+  useEffect(() => {
+    if (!onClose) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [onClose]);
+
   return (
-    <div className={`min-h-screen bg-[#08090B] text-[#F5F3EF] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans selection:bg-[#F2BD91]/30 selection:text-[#F2BD91] ${
-      onClose ? 'fixed inset-0 z-50 bg-[#08090B]/92 backdrop-blur-xl overflow-y-auto animate-fadeIn' : ''
-    }`}>
+    <div
+      className={
+        onClose
+          ? 'fixed inset-0 z-[100] w-full h-full bg-[#08090B]/95 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-6 overflow-y-auto font-sans text-[#F5F3EF] selection:bg-[#F2BD91]/30 selection:text-[#F2BD91] animate-fadeIn'
+          : 'min-h-screen w-full bg-[#08090B] text-[#F5F3EF] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans selection:bg-[#F2BD91]/30 selection:text-[#F2BD91]'
+      }
+    >
       {/* ====================================================================
           1. FINE GEOMETRIC FINTECH GRID OVERLAY WITH RADIAL VIGNETTE
          ==================================================================== */}
