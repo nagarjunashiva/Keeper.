@@ -4915,14 +4915,28 @@ export default function App() {
                     Manage your authenticated profile, password security, currency preferences, and secure cloud storage.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleSignOut}
-                  className="self-start sm:self-auto px-4 py-2.5 rounded-xl bg-[#2B1B1D] hover:bg-[#3B2225] border border-[#4D262A] text-[#F27474] text-xs font-semibold flex items-center gap-2"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Sign Out ({profile.email})
-                </button>
+                {authSession ? (
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    className="self-start sm:self-auto px-4 py-2.5 rounded-xl bg-[#2B1B1D] hover:bg-[#3B2225] border border-[#4D262A] text-[#F27474] text-xs font-semibold flex items-center gap-2 transition-colors active:scale-95"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sign Out ({profile.email})
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPendingAction(null);
+                      setIsAuthModalOpen(true);
+                    }}
+                    className="self-start sm:self-auto px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#F2BD91] to-[#E59866] hover:opacity-95 text-[#141518] text-xs font-bold flex items-center gap-2 shadow-md shadow-[#F2BD91]/10 transition-all active:scale-95"
+                  >
+                    <User className="w-4 h-4" />
+                    Sign In / Create Account
+                  </button>
+                )}
               </div>
 
               {/* Profile Configuration Card */}
@@ -4956,7 +4970,7 @@ export default function App() {
                     <label className="block text-xs text-[#A5A5A5] mb-1.5">Authenticated Email</label>
                     <input
                       type="email"
-                      value={profile.email}
+                      value={authSession ? profile.email : 'Not signed in (Guest Explorer)'}
                       disabled
                       className="w-full bg-[#101113] border border-[#24252A] rounded-xl px-3.5 py-2.5 text-sm text-[#8E8F94] cursor-not-allowed"
                     />
@@ -4995,53 +5009,55 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Password Security Update Card */}
-              <form
-                onSubmit={handleChangePassword}
-                className="bg-[#191A1E] border border-[#292A2F] rounded-2xl p-6 space-y-4"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-base font-semibold text-[#F5F3EF]">
-                      Change Account Password
-                    </h2>
-                    <p className="text-xs text-[#A5A5A5] mt-0.5">
-                      Passwords are salted and hashed with Web Crypto SHA-256 before storage.
-                    </p>
+              {/* Password Security Update Card (Only for Authenticated Users) */}
+              {authSession && (
+                <form
+                  onSubmit={handleChangePassword}
+                  className="bg-[#191A1E] border border-[#292A2F] rounded-2xl p-6 space-y-4"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-base font-semibold text-[#F5F3EF]">
+                        Change Account Password
+                      </h2>
+                      <p className="text-xs text-[#A5A5A5] mt-0.5">
+                        Passwords are salted and hashed with Web Crypto SHA-256 before storage.
+                      </p>
+                    </div>
+                    <Lock className="w-5 h-5 text-[#F2BD91]" />
                   </div>
-                  <Lock className="w-5 h-5 text-[#F2BD91]" />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs text-[#A5A5A5] mb-1.5">New Password</label>
-                    <input
-                      type="password"
-                      value={newPassInput}
-                      onChange={(e) => setNewPassInput(e.target.value)}
-                      placeholder="Minimum 6 characters"
-                      className="w-full bg-[#141518] border border-[#292A2F] rounded-xl px-3.5 py-2.5 text-sm text-[#F5F3EF] focus:border-[#F2BD91] focus:outline-none"
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs text-[#A5A5A5] mb-1.5">New Password</label>
+                      <input
+                        type="password"
+                        value={newPassInput}
+                        onChange={(e) => setNewPassInput(e.target.value)}
+                        placeholder="Minimum 6 characters"
+                        className="w-full bg-[#141518] border border-[#292A2F] rounded-xl px-3.5 py-2.5 text-sm text-[#F5F3EF] focus:border-[#F2BD91] focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-[#A5A5A5] mb-1.5">Confirm New Password</label>
+                      <input
+                        type="password"
+                        value={confirmPassInput}
+                        onChange={(e) => setConfirmPassInput(e.target.value)}
+                        placeholder="Repeat new password"
+                        className="w-full bg-[#141518] border border-[#292A2F] rounded-xl px-3.5 py-2.5 text-sm text-[#F5F3EF] focus:border-[#F2BD91] focus:outline-none"
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-xs text-[#A5A5A5] mb-1.5">Confirm New Password</label>
-                    <input
-                      type="password"
-                      value={confirmPassInput}
-                      onChange={(e) => setConfirmPassInput(e.target.value)}
-                      placeholder="Repeat new password"
-                      className="w-full bg-[#141518] border border-[#292A2F] rounded-xl px-3.5 py-2.5 text-sm text-[#F5F3EF] focus:border-[#F2BD91] focus:outline-none"
-                    />
+                  <div className="flex justify-end">
+                    <button
+                      type="submit"
+                      className="px-4 py-2 rounded-xl bg-[#F2BD91] text-[#141518] text-xs font-semibold"
+                    >
+                      Update Password
+                    </button>
                   </div>
-                </div>
-                <div className="flex justify-end">
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-xl bg-[#F2BD91] text-[#141518] text-xs font-semibold"
-                  >
-                    Update Password
-                  </button>
-                </div>
-              </form>
+                </form>
+              )}
 
               {/* Real Cloud Vault Engine (Strictly Admin Only) */}
               {isAdmin && (
