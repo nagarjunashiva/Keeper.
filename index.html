@@ -7,12 +7,98 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <style>
+      body {
+        margin: 0;
+        background-color: #08090a;
+        color: #f5f3ef;
+      }
+      .pre-loader-wrap {
+        position: fixed;
+        inset: 0;
+        background: #08090a;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        user-select: none;
+      }
+      .pre-ring {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        border: 2px dashed rgba(242, 189, 145, 0.25);
+        animation: preSpin 12s linear infinite;
+        position: absolute;
+      }
+      .pre-core {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+        background: linear-gradient(180deg, #25221e 0%, #15161a 100%);
+        border: 1px solid #3e3328;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 35px rgba(242, 189, 145, 0.25);
+      }
+      .pre-bar {
+        width: 220px;
+        height: 4px;
+        background: #1a1b20;
+        border-radius: 999px;
+        overflow: hidden;
+        margin-top: 32px;
+        position: relative;
+      }
+      .pre-fill {
+        height: 100%;
+        width: 45%;
+        background: linear-gradient(90deg, #f2bd91, #5ce095);
+        border-radius: 999px;
+        animation: preRun 1.4s ease-in-out infinite;
+      }
+      @keyframes preSpin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      @keyframes preRun {
+        0% { transform: translateX(-100%); }
+        50% { transform: translateX(100%); }
+        100% { transform: translateX(250%); }
+      }
+    </style>
   </head>
-  <body class="bg-[#101113] text-[#F5F3EF]">
-    <div id="root"></div>
+  <body class="bg-[#08090A] text-[#F5F3EF]">
+    <div id="root">
+      <div class="pre-loader-wrap">
+        <div style="position:relative; width:140px; height:140px; display:flex; align-items:center; justify-content:center;">
+          <div class="pre-ring"></div>
+          <div class="pre-core">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#F2BD91" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m16.5 9.4-9-5.16a1.79 1.79 0 0 0-2.5 1.56v12.4a1.79 1.79 0 0 0 2.5 1.56l9-5.16a1.78 1.78 0 0 0 0-3.2Z"></path>
+              <polyline points="3.29 7 12 12 20.71 7"></polyline>
+              <line x1="12" y1="22" x2="12" y2="12"></line>
+            </svg>
+          </div>
+        </div>
+        <div style="margin-top:24px; text-align:center;">
+          <div style="font-size:24px; font-weight:800; letter-spacing:0.2em; text-transform:uppercase;">
+            KEEPER<span style="color:#F2BD91;">..</span>
+          </div>
+          <div style="font-size:11px; color:#A5A5A5; letter-spacing:0.08em; text-transform:uppercase; margin-top:6px;">
+            Personal Purchases &bull; Warranty &bull; Cards
+          </div>
+        </div>
+        <div class="pre-bar">
+          <div class="pre-fill"></div>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

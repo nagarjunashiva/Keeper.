@@ -77,6 +77,7 @@ import { WarrantyClaimModal } from './components/WarrantyClaimModal';
 import { CardAccountModal } from './components/CardAccountModal';
 import { CardsAndWalletView } from './components/CardsAndWalletView';
 import { VaultAuthTransition } from './components/VaultAuthTransition';
+import { KeeperLoadingScreen } from './components/KeeperLoadingScreen';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -655,6 +656,9 @@ function generateInvoiceHTML(receipt: ReceiptRecord, purchase?: ComputedPurchase
 // MAIN APPLICATION COMPONENT
 // ============================================================================
 export default function App() {
+  // Initial Application Boot & Loading Screen State
+  const [appLoading, setAppLoading] = useState(true);
+
   // Authentication State
   const [authSession, setAuthSession] = useState<AuthAccount | null>(() => loadActiveSession());
 
@@ -1998,6 +2002,12 @@ export default function App() {
   if (!authSession) {
     return (
       <>
+        {appLoading && (
+          <KeeperLoadingScreen
+            onLoaded={() => setAppLoading(false)}
+            minDisplayTimeMs={1100}
+          />
+        )}
         {authTransition && (
           <VaultAuthTransition
             type={authTransition.type}
@@ -2033,6 +2043,12 @@ export default function App() {
   // ============================================================================
   return (
     <>
+      {appLoading && (
+        <KeeperLoadingScreen
+          onLoaded={() => setAppLoading(false)}
+          minDisplayTimeMs={1100}
+        />
+      )}
       {authTransition && (
         <VaultAuthTransition
           type={authTransition.type}
