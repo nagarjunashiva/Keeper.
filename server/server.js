@@ -430,7 +430,7 @@ app.get('/', (req, res) => {
   `);
 });
 
-// Start server
+// Start server only when running locally (not in Vercel Serverless environment)
 async function startServer() {
   await connectDatabase();
   await getTransporter(); // Initialize Nodemailer
@@ -443,4 +443,9 @@ async function startServer() {
   });
 }
 
-startServer();
+if (!process.env.VERCEL) {
+  startServer();
+}
+
+export { app, connectDatabase };
+export default app;
