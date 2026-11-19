@@ -653,6 +653,69 @@ function generateInvoiceHTML(receipt: ReceiptRecord, purchase?: ComputedPurchase
 }
 
 // ============================================================================
+// RICH SAMPLE CARDS FOR FREE GUEST EXPLORATION
+// ============================================================================
+const SAMPLE_PREVIEW_CARDS: CardAccountRecord[] = [
+  {
+    id: 'card_sample_hdfc',
+    name: 'HDFC Millennia Credit Card',
+    bank: 'HDFC Bank',
+    type: 'credit_card',
+    last4: '4821',
+    expiryMMYY: '08/28',
+    billingDueDate: 5,
+    statementDate: 15,
+    creditLimit: 150000,
+    dailyLimit: 0,
+    currentBalanceOrSavings: 0,
+    expenses: [
+      { id: 'exp_1', title: 'Apple Store BKC', amount: 119900, category: 'Electronics', date: '2026-09-20' },
+      { id: 'exp_2', title: 'Swiggy Gourmet', amount: 1450, category: 'Dining', date: '2026-11-18' }
+    ],
+    cardColor: 'sapphire',
+    notes: 'Primary shopping & rewards card with 5% cashback on Amazon & Swiggy.',
+    createdAt: '2026-09-20T00:00:00Z'
+  },
+  {
+    id: 'card_sample_icici',
+    name: 'ICICI Amazon Pay Credit Card',
+    bank: 'ICICI Bank',
+    type: 'credit_card',
+    last4: '1092',
+    expiryMMYY: '11/29',
+    billingDueDate: 12,
+    statementDate: 22,
+    creditLimit: 200000,
+    dailyLimit: 0,
+    currentBalanceOrSavings: 0,
+    expenses: [
+      { id: 'exp_3', title: 'Sony WH-1000XM5', amount: 24990, category: 'Electronics', date: '2026-08-10' }
+    ],
+    cardColor: 'gold',
+    notes: 'Lifetime free card. 5% unlimited cashback on Amazon purchases.',
+    createdAt: '2026-08-10T00:00:00Z'
+  },
+  {
+    id: 'card_sample_salary',
+    name: 'HDFC Classic Salary Account',
+    bank: 'HDFC Bank',
+    type: 'savings_account',
+    last4: '9920',
+    expiryMMYY: '',
+    billingDueDate: 0,
+    statementDate: 0,
+    creditLimit: 0,
+    dailyLimit: 0,
+    currentBalanceOrSavings: 148500,
+    savingsGoal: 250000,
+    expenses: [],
+    cardColor: 'emerald',
+    notes: 'Primary salary account. Emergency fund & automated SIP hub.',
+    createdAt: '2026-01-01T00:00:00Z'
+  }
+];
+
+// ============================================================================
 // MAIN APPLICATION COMPONENT
 // ============================================================================
 export default function App() {
@@ -688,14 +751,16 @@ export default function App() {
   const [subscriptions, setSubscriptions] = useState<SubscriptionRecord[]>([]);
   const [cards, setCards] = useState<CardAccountRecord[]>([]);
 
-  // Load authenticated user's isolated data from Cloud Database Vault
+  // Load authenticated user's isolated data, or provide rich sample exploration data for guests
   useEffect(() => {
     if (!authSession) {
-      setPurchases([]);
-      setReceipts([]);
-      setReminders([]);
-      setSubscriptions([]);
-      setCards([]);
+      const starter = generateRealStarterDataset('demo_guest', profile.referenceDate);
+      setPurchases(starter.purchases);
+      setSubscriptions(starter.subscriptions);
+      setReminders(starter.reminders);
+      setReceipts(starter.receipts);
+      setCards(SAMPLE_PREVIEW_CARDS);
+      setDatabaseLoading(false);
       return;
     }
     const keyPrefix = `keeper_u_${authSession.id}`;
@@ -848,6 +913,25 @@ export default function App() {
   // Wallet & Cards Modals
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
   const [editingCard, setEditingCard] = useState<CardAccountRecord | null>(null);
+
+  // Free Exploration & Auth Gate Modals
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authPromptReason, setAuthPromptReason] = useState('');
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
+
+  const requireAuth = useCallback(
+    (reason: string, action: () => void) => {
+      if (!authSession) {
+        setAuthPromptReason(reason);
+        setPendingAction(() => action);
+        setIsAuthModalOpen(true);
+        return false;
+      }
+      action();
+      return true;
+    },
+    [authSession]
+  );
   
 
   // Toast Notification Banner
@@ -1367,14 +1451,18 @@ export default function App() {
   // CRUD HANDLERS (Purchases, Receipts, Reminders)
   // ============================================================================
   const handleOpenAddPurchase = () => {
-    setEditingPurchase(null);
-    setIsPurchaseModalOpen(true);
+    requireAuth('Sign in or create a free account to log purchases, track warranties & upload receipts.', () => {
+      setEditingPurchase(null);
+      setIsPurchaseModalOpen(true);
+    });
   };
 
   const handleOpenEditPurchase = (purchase: Purchase) => {
-    setEditingPurchase(purchase);
-    setIsPurchaseModalOpen(true);
-    setOpenActionMenuId(null);
+    requireAuth('Sign in to edit this purchase and save changes to your cloud vault.', () => {
+      setEditingPurchase(purchase);
+      setIsPurchaseModalOpen(true);
+      setOpenActionMenuId(null);
+    });
   };
 
   const handleOpenAddReminderForPurchase = (item: ComputedPurchase) => {
@@ -1997,49 +2085,7 @@ export default function App() {
   }, [profile.referenceDate]);
 
   // ============================================================================
-  // AUTH GATE: IF NOT SIGNED IN, SHOW REAL AUTHENTICATION PORTAL
-  // ============================================================================
-  if (!authSession) {
-    return (
-      <>
-        {appLoading && (
-          <KeeperLoadingScreen
-            onLoaded={() => setAppLoading(false)}
-            minDisplayTimeMs={1100}
-          />
-        )}
-        {authTransition && (
-          <VaultAuthTransition
-            type={authTransition.type}
-            userName={authTransition.userName}
-            userEmail={authTransition.userEmail}
-          />
-        )}
-        <AuthPortal
-          onAuthenticated={(account, rememberMe) => {
-            setAuthTransition({
-              type: 'signing_in',
-              userName: account.name,
-              userEmail: account.email
-            });
-            saveActiveSession(account, rememberMe);
-
-            setTimeout(() => {
-              setAuthSession(account);
-              setActiveTab('dashboard');
-              setTimeout(() => {
-                setAuthTransition(null);
-                showToast(`Welcome back, ${account.name}! Keeper Vault Unlocked.`);
-              }, 350);
-            }, 1200);
-          }}
-        />
-      </>
-    );
-  }
-
-  // ============================================================================
-  // RENDER AUTHENTICATED WORKSPACE
+  // RENDER WORKSPACE (Free Exploration for Guests, Cloud-Synced for Members)
   // ============================================================================
   return (
     <>
@@ -2054,6 +2100,36 @@ export default function App() {
           type={authTransition.type}
           userName={authTransition.userName}
           userEmail={authTransition.userEmail}
+        />
+      )}
+      {isAuthModalOpen && (
+        <AuthPortal
+          onClose={() => {
+            setIsAuthModalOpen(false);
+            setPendingAction(null);
+          }}
+          promptReason={authPromptReason}
+          onAuthenticated={(account, rememberMe) => {
+            setAuthTransition({
+              type: 'signing_in',
+              userName: account.name,
+              userEmail: account.email
+            });
+            saveActiveSession(account, rememberMe);
+            setIsAuthModalOpen(false);
+
+            setTimeout(() => {
+              setAuthSession(account);
+              if (pendingAction) {
+                pendingAction();
+                setPendingAction(null);
+              }
+              setTimeout(() => {
+                setAuthTransition(null);
+                showToast(`Welcome back, ${account.name}! Keeper Vault Unlocked.`);
+              }, 350);
+            }, 1200);
+          }}
         />
       )}
       <div
@@ -2262,17 +2338,34 @@ export default function App() {
               </div>
             </div>
             <div className="pt-4 border-t border-[#292A2F] space-y-3">
-              <div className="text-xs text-[#A5A5A5]">
-                Signed in as <strong className="text-[#F5F3EF]">{profile.name}</strong>
-              </div>
-              <button
-                type="button"
-                onClick={handleSignOut}
-                className="w-full py-2 rounded-xl bg-[#2B1B1D] text-[#F27474] text-xs font-semibold flex items-center justify-center gap-2"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                Sign Out
-              </button>
+              {!authSession ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setAuthPromptReason('Create an account or sign in to save your cards, purchases & auto-pay schedules.');
+                    setIsAuthModalOpen(true);
+                  }}
+                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#F2BD91] to-[#E59866] text-[#141518] text-xs font-bold flex items-center justify-center gap-2 shadow-md active:scale-95"
+                >
+                  <User className="w-4 h-4" />
+                  Sign In / Create Account
+                </button>
+              ) : (
+                <>
+                  <div className="text-xs text-[#A5A5A5]">
+                    Signed in as <strong className="text-[#F5F3EF]">{profile.name}</strong>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    className="w-full py-2 rounded-xl bg-[#2B1B1D] text-[#F27474] text-xs font-semibold flex items-center justify-center gap-2"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    Sign Out
+                  </button>
+                </>
+              )}
             </div>
           </div>
           <div className="flex-1" onClick={() => setMobileMenuOpen(false)} />
@@ -2529,77 +2622,115 @@ export default function App() {
               </div>
 
               {/* Profile Avatar & Dropdown */}
-              <div className="relative">
+              {!authSession ? (
                 <button
                   type="button"
                   onClick={() => {
-                    setProfileMenuOpen(!profileMenuOpen);
-                    setNotificationsOpen(false);
+                    setAuthPromptReason('Create an account or sign in to save your cards, purchases & auto-pay schedules.');
+                    setPendingAction(null);
+                    setIsAuthModalOpen(true);
                   }}
-                  className="flex items-center gap-2 p-1 pr-2.5 rounded-full bg-[#18191D]/80 hover:bg-[#222328] border border-[#292A2F] transition-colors"
+                  className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-[#F2BD91] to-[#E59866] hover:opacity-95 text-[#141518] text-xs font-bold shadow-md shadow-[#F2BD91]/10 transition-all active:scale-95"
                 >
-                  <img
-                    src={AVATAR_IMG}
-                    alt={profile.name}
-                    className="w-8 h-8 rounded-full object-cover border border-[#3A3B42]"
-                  />
-                  <span className="hidden sm:inline text-xs font-medium text-[#F5F3EF] max-w-[110px] truncate">
-                    {profile.name}
-                  </span>
-                  <ChevronDown className="w-3.5 h-3.5 text-[#A5A5A5]" />
+                  <User className="w-3.5 h-3.5" />
+                  <span>Sign In</span>
                 </button>
+              ) : (
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setProfileMenuOpen(!profileMenuOpen);
+                      setNotificationsOpen(false);
+                    }}
+                    className="flex items-center gap-2 p-1 pr-2.5 rounded-full bg-[#18191D]/80 hover:bg-[#222328] border border-[#292A2F] transition-colors"
+                  >
+                    <img
+                      src={AVATAR_IMG}
+                      alt={profile.name}
+                      className="w-8 h-8 rounded-full object-cover border border-[#3A3B42]"
+                    />
+                    <span className="hidden sm:inline text-xs font-medium text-[#F5F3EF] max-w-[110px] truncate">
+                      {profile.name}
+                    </span>
+                    <ChevronDown className="w-3.5 h-3.5 text-[#A5A5A5]" />
+                  </button>
 
-                {profileMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-64 bg-[#191A1E] border border-[#292A2F] rounded-2xl shadow-2xl p-2 z-50">
-                    <div className="px-3 py-2.5 border-b border-[#292A2F]">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-[#F5F3EF] truncate">
-                          {profile.name}
-                        </span>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#173023] text-[#5CE095] font-medium">
-                          'Verified'
-                        </span>
+                  {profileMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-64 bg-[#191A1E] border border-[#292A2F] rounded-2xl shadow-2xl p-2 z-50">
+                      <div className="px-3 py-2.5 border-b border-[#292A2F]">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-semibold text-[#F5F3EF] truncate">
+                            {profile.name}
+                          </span>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#173023] text-[#5CE095] font-medium">
+                            'Verified'
+                          </span>
+                        </div>
+                        <div className="text-xs text-[#A5A5A5] truncate mt-0.5">{profile.email}</div>
                       </div>
-                      <div className="text-xs text-[#A5A5A5] truncate mt-0.5">{profile.email}</div>
+                      <div className="py-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setProfileMenuOpen(false);
+                            setActiveTab('settings');
+                          }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#E5E3DF] hover:bg-[#23242A] rounded-xl"
+                        >
+                          <Settings className="w-4 h-4 text-[#A5A5A5]" />
+                          Account &amp; Security Settings
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setProfileMenuOpen(false);
+                            setIsDatabaseModalOpen(true);
+                          }}
+                          className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#E5E3DF] hover:bg-[#23242A] rounded-xl"
+                        >
+                          <Cloud className="w-4 h-4 text-[#F2BD91]" />
+                          Cloud Vault Storage
+                        </button>
+                        <div className="my-1 border-t border-[#292A2F]" />
+                        <button
+                          type="button"
+                          onClick={handleSignOut}
+                          className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#F27474] hover:bg-[#2B1B1D] rounded-xl font-medium"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          Sign Out
+                        </button>
+                      </div>
                     </div>
-                    <div className="py-1">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setProfileMenuOpen(false);
-                          setActiveTab('settings');
-                        }}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#E5E3DF] hover:bg-[#23242A] rounded-xl"
-                      >
-                        <Settings className="w-4 h-4 text-[#A5A5A5]" />
-                        Account &amp; Security Settings
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setProfileMenuOpen(false);
-                          setIsDatabaseModalOpen(true);
-                        }}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#E5E3DF] hover:bg-[#23242A] rounded-xl"
-                      >
-                        <Cloud className="w-4 h-4 text-[#F2BD91]" />
-                        Cloud Vault Storage
-                      </button>
-                      <div className="my-1 border-t border-[#292A2F]" />
-                      <button
-                        type="button"
-                        onClick={handleSignOut}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#F27474] hover:bg-[#2B1B1D] rounded-xl font-medium"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        Sign Out
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
             </div>
           </header>
+
+          {/* Free Exploration Mode Banner (For Unregistered / Guest Users) */}
+          {!authSession && (
+            <div className="mb-6 px-4 py-3 rounded-2xl bg-gradient-to-r from-[#241F1B] via-[#1B1B1F] to-[#15161A] border border-[#3E3127] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#E5E3DF] shadow-md animate-fadeIn">
+              <div className="flex items-center gap-2.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#F2BD91] shadow-[0_0_8px_#F2BD91] animate-pulse shrink-0" />
+                <span className="font-medium">
+                  <strong className="text-[#F2BD91]">Free Exploration Mode</strong> &bull; Feel free to test and explore all views. Sign in anytime to add and save your cards, purchases, and subscriptions!
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthPromptReason('Create an account or sign in to save your cards, purchases & auto-pay schedules.');
+                  setPendingAction(null);
+                  setIsAuthModalOpen(true);
+                }}
+                className="px-3.5 py-1.5 rounded-xl bg-[#F2BD91] hover:bg-[#F0B280] text-[#141518] text-xs font-bold shrink-0 transition-all shadow-sm active:scale-95"
+              >
+                Sign In to Save
+              </button>
+            </div>
+          )}
 
           {/* ================================================================
               VIEW 1: DASHBOARD
@@ -3436,36 +3567,52 @@ export default function App() {
               referenceDate={profile.referenceDate}
               currencySymbol={profile.currencySymbol}
               onOpenAddModal={() => {
-                setEditingSubscription(null);
-                setIsSubscriptionModalOpen(true);
+                requireAuth('Sign in or create a free account to track subscriptions and 28-day auto-pay cycles.', () => {
+                  setEditingSubscription(null);
+                  setIsSubscriptionModalOpen(true);
+                });
               }}
               onEditSubscription={(sub) => {
-                setEditingSubscription(sub);
-                setIsSubscriptionModalOpen(true);
+                requireAuth('Sign in to edit this subscription in your cloud vault.', () => {
+                  setEditingSubscription(sub);
+                  setIsSubscriptionModalOpen(true);
+                });
               }}
               onDeleteSubscription={(sub) => {
-                setDeleteConfirmTarget({
-                  type: 'subscription',
-                  id: sub.id,
-                  name: sub.name
+                requireAuth('Sign in to manage subscriptions in your vault.', () => {
+                  setDeleteConfirmTarget({
+                    type: 'subscription',
+                    id: sub.id,
+                    name: sub.name
+                  });
                 });
               }}
-              onToggleAutoPay={handleToggleSubscriptionAutoPay}
-              onToggleStatus={handleToggleSubscriptionStatus}
-              onApplyPreset={(preset) => {
-                setEditingSubscription({
-                  ...preset,
-                  id: '',
-                  startDate: profile.referenceDate,
-                  nextBillingDate: addDaysToDate(
-                    profile.referenceDate,
-                    preset.billingCycle === '28_days' ? 28 : 30
-                  ),
-                  status: 'active',
-                  autoCreateReminder: true,
-                  createdAt: ''
+              onToggleAutoPay={(id: string) => {
+                requireAuth('Sign in to configure auto-pay toggles in your cloud vault.', () => {
+                  handleToggleSubscriptionAutoPay(id);
                 });
-                setIsSubscriptionModalOpen(true);
+              }}
+              onToggleStatus={(id: string) => {
+                requireAuth('Sign in to toggle subscription status in your cloud vault.', () => {
+                  handleToggleSubscriptionStatus(id);
+                });
+              }}
+              onApplyPreset={(preset) => {
+                requireAuth('Sign in or create a free account to track this subscription in your vault.', () => {
+                  setEditingSubscription({
+                    ...preset,
+                    id: '',
+                    startDate: profile.referenceDate,
+                    nextBillingDate: addDaysToDate(
+                      profile.referenceDate,
+                      preset.billingCycle === '28_days' ? 28 : 30
+                    ),
+                    status: 'active',
+                    autoCreateReminder: true,
+                    createdAt: ''
+                  });
+                  setIsSubscriptionModalOpen(true);
+                });
               }}
             />
           )}
@@ -3481,14 +3628,22 @@ export default function App() {
               monthlyIncome={profile.monthlyIncome || 0}
               onUpdateIncome={handleUpdateIncome}
               onOpenAddCard={() => {
-                setEditingCard(null);
-                setIsCardModalOpen(true);
+                requireAuth('Sign in or create a free account to add cards and track expense balances.', () => {
+                  setEditingCard(null);
+                  setIsCardModalOpen(true);
+                });
               }}
               onEditCard={(c) => {
-                setEditingCard(c);
-                setIsCardModalOpen(true);
+                requireAuth('Sign in to modify your saved cards in your cloud vault.', () => {
+                  setEditingCard(c);
+                  setIsCardModalOpen(true);
+                });
               }}
-              onDeleteCard={handleDeleteCard}
+              onDeleteCard={(c) => {
+                requireAuth('Sign in to manage your saved cards.', () => {
+                  handleDeleteCard(c);
+                });
+              }}
               onSaveCard={handleSaveCard}
               currencySymbol={profile.currencySymbol}
               referenceDate={profile.referenceDate}

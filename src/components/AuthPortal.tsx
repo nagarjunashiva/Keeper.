@@ -16,15 +16,18 @@ import {
   Zap,
   Calendar,
   Sparkles,
-  TrendingUp
+  TrendingUp,
+  X
 } from 'lucide-react';
 import type { AuthAccount } from '../App';
 
 interface AuthPortalProps {
   onAuthenticated: (account: AuthAccount, rememberMe: boolean) => void;
+  onClose?: () => void;
+  promptReason?: string;
 }
 
-export function AuthPortal({ onAuthenticated }: AuthPortalProps) {
+export function AuthPortal({ onAuthenticated, onClose, promptReason }: AuthPortalProps) {
   const [mode, setMode] = useState<'signin' | 'signup' | 'verify-otp' | 'forgot' | 'reset-otp'>('signin');
 
   // Form inputs
@@ -287,7 +290,9 @@ export function AuthPortal({ onAuthenticated }: AuthPortalProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#090A0C] text-[#F5F3EF] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans selection:bg-[#F2BD91]/30 selection:text-[#F2BD91]">
+    <div className={`min-h-screen bg-[#090A0C] text-[#F5F3EF] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans selection:bg-[#F2BD91]/30 selection:text-[#F2BD91] ${
+      onClose ? 'fixed inset-0 z-50 bg-black/85 backdrop-blur-md overflow-y-auto animate-fadeIn' : ''
+    }`}>
       {/* ====================================================================
           1. FINE GEOMETRIC FINTECH GRID OVERLAY WITH RADIAL VIGNETTE
          ==================================================================== */}
@@ -344,6 +349,18 @@ export function AuthPortal({ onAuthenticated }: AuthPortalProps) {
           4. THE KEEPER VAULT AUTH MODAL (TITANIUM GLASSMORPHISM)
          ==================================================================== */}
       <div className="w-full max-w-md bg-[#131417]/92 border border-[#27282F] rounded-2xl shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_40px_rgba(242,189,145,0.06)] p-6 sm:p-8 relative z-10 backdrop-blur-2xl before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-[#F2BD91]/50 before:to-transparent">
+        {/* Modal Close Button */}
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 rounded-xl text-[#A5A5A5] hover:text-[#F5F3EF] hover:bg-[#1E2026] transition-colors"
+            aria-label="Close"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
+
         {/* Keeper Vault Header */}
         <div className="flex flex-col items-center text-center mb-6">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-b from-[#24211D] to-[#17181D] border border-[#3E3228] flex items-center justify-center text-[#F2BD91] shadow-[0_4px_20px_rgba(242,189,145,0.15)] mb-3">
@@ -354,6 +371,14 @@ export function AuthPortal({ onAuthenticated }: AuthPortalProps) {
             Personal Purchases, Warranty Timeline &amp; Auto-Pay Tracker
           </p>
         </div>
+
+        {/* Action Prompt Reason Banner */}
+        {promptReason && (
+          <div className="mb-5 p-3 rounded-xl bg-[#25201C] border border-[#4E3929] text-[#F2BD91] text-xs flex items-start gap-2.5 shadow-sm">
+            <Sparkles className="w-4 h-4 shrink-0 mt-0.5 text-[#F2BD91]" />
+            <span className="leading-relaxed font-medium">{promptReason}</span>
+          </div>
+        )}
 
         {/* Tab switchers for Sign In / Sign Up */}
         {(mode === 'signin' || mode === 'signup') && (
