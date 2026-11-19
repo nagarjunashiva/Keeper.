@@ -653,6 +653,11 @@ function generateInvoiceHTML(receipt: ReceiptRecord, purchase?: ComputedPurchase
 }
 
 // ============================================================================
+// ADMIN CONFIGURATION
+// ============================================================================
+export const ADMIN_EMAIL = 'nagarjunashiva5901@gmail.com';
+
+// ============================================================================
 // MAIN APPLICATION COMPONENT (Clean Slate, 0 Fake Data)
 // ============================================================================
 export default function App() {
@@ -661,6 +666,11 @@ export default function App() {
 
   // Authentication State
   const [authSession, setAuthSession] = useState<AuthAccount | null>(() => loadActiveSession());
+
+  // Strict Admin Identification
+  const isAdmin = Boolean(
+    authSession?.email && authSession.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim()
+  );
 
   // Navigation & Responsive Drawer State
   const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
@@ -1603,8 +1613,12 @@ export default function App() {
     setEditingSubscription(null);
   };
 
-  // Database actions: Reload sample data, clear database
+  // Database actions: Reload sample data, clear database (Admin only)
   const handleReloadSampleData = async () => {
+    if (!isAdmin) {
+      showToast('Unauthorized: Admin access required.', 'warning');
+      return;
+    }
     setDatabaseLoading(true);
     try {
       const data = await dbManager.seedSampleData(profile.referenceDate);
@@ -1619,6 +1633,10 @@ export default function App() {
   };
 
   const handleClearDatabase = async () => {
+    if (!isAdmin) {
+      showToast('Unauthorized: Admin access required.', 'warning');
+      return;
+    }
     setPurchases([]);
     setSubscriptions([]);
     setReminders([]);
@@ -2448,24 +2466,26 @@ export default function App() {
               )}
             </div>
 
-            {/* Right Top Controls: Database, Notifications & Profile Menu */}
+            {/* Right Top Controls: Database (Admin Only), Notifications & Profile Menu */}
             <div className="flex items-center gap-3">
-              {/* Cloud Vault Status Button */}
-              <button
-                type="button"
-                onClick={() => setIsDatabaseModalOpen(true)}
-                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#18191D]/90 border border-[#2B2C33] hover:border-[#58C286]/50 text-xs transition-all shadow-sm group"
-                title="Keeper Cloud Vault Storage"
-              >
-                <Cloud className="w-3.5 h-3.5 text-[#58C286]" />
-                <span className="text-[#C8C7C5]">
-                  Vault:{' '}
-                  <strong className="text-[#F5F3EF] group-hover:text-[#58C286] transition-colors">
-                    Cloud Synced
-                  </strong>
-                </span>
-                <span className="w-2 h-2 rounded-full bg-[#58C286] animate-pulse" />
-              </button>
+              {/* Admin Cloud Vault Console Button (Strictly Admin Only) */}
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={() => setIsDatabaseModalOpen(true)}
+                  className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#241F18] border border-[#4E3929] hover:border-[#F2BD91] text-xs transition-all shadow-sm group"
+                  title={`Admin Cloud Vault Console (${ADMIN_EMAIL})`}
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#F2BD91]" />
+                  <span className="text-[#C8C7C5]">
+                    Admin:{' '}
+                    <strong className="text-[#F2BD91] group-hover:text-[#F5C8A2] transition-colors">
+                      Cloud Vault
+                    </strong>
+                  </span>
+                  <span className="w-2 h-2 rounded-full bg-[#58C286] animate-pulse" />
+                </button>
+              )}
 
               {/* Notifications Bell */}
               <div className="relative">
@@ -2617,17 +2637,19 @@ export default function App() {
                           <Settings className="w-4 h-4 text-[#A5A5A5]" />
                           Account &amp; Security Settings
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setProfileMenuOpen(false);
-                            setIsDatabaseModalOpen(true);
-                          }}
-                          className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#E5E3DF] hover:bg-[#23242A] rounded-xl"
-                        >
-                          <Cloud className="w-4 h-4 text-[#F2BD91]" />
-                          Cloud Vault Storage
-                        </button>
+                        {isAdmin && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setProfileMenuOpen(false);
+                              setIsDatabaseModalOpen(true);
+                            }}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-[#F2BD91] hover:bg-[#23242A] rounded-xl font-medium"
+                          >
+                            <ShieldCheck className="w-4 h-4 text-[#F2BD91]" />
+                            Admin: Manage Cloud Vault
+                          </button>
+                        )}
                         <div className="my-1 border-t border-[#292A2F]" />
                         <button
                           type="button"
@@ -5021,72 +5043,74 @@ export default function App() {
                 </div>
               </form>
 
-              {/* Real Cloud Vault Engine */}
-              <div className="bg-[#191A1E] border border-[#292A2F] rounded-2xl p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-base font-semibold text-[#F5F3EF]">
-                        Keeper Cloud Vault &amp; Storage
-                      </h2>
-                      <span className="text-[11px] px-2.5 py-0.5 rounded-full font-semibold border bg-[#152B1F] text-[#58C286] border-[#224A35]">
-                        ● Cloud Storage Active
-                      </span>
+              {/* Real Cloud Vault Engine (Strictly Admin Only) */}
+              {isAdmin && (
+                <div className="bg-[#191A1E] border border-[#3E3228] rounded-2xl p-6 space-y-4 relative overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-[#F2BD91]/40 before:to-transparent">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-base font-semibold text-[#F5F3EF]">
+                          Admin Cloud Vault Console
+                        </h2>
+                        <span className="text-[11px] px-2.5 py-0.5 rounded-full font-semibold border bg-[#231E18] text-[#F2BD91] border-[#4A3828]">
+                          Admin Only &bull; {ADMIN_EMAIL}
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#A5A5A5] mt-1">
+                        Developer &amp; admin controls: inspect vault storage, seed starter test data, or clear cloud database.
+                      </p>
                     </div>
-                    <p className="text-xs text-[#A5A5A5] mt-1">
-                      All purchases, warranties, receipts, and subscriptions are synchronized with your secure cloud vault. Zero fake data.
-                    </p>
+                    <Database className="w-5 h-5 text-[#F2BD91]" />
                   </div>
-                  <Cloud className="w-5 h-5 text-[#58C286]" />
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-1">
+                    <div className="p-3 rounded-xl bg-[#141518] border border-[#26272C] text-center">
+                      <div className="text-[11px] text-[#A5A5A5]">Purchases</div>
+                      <div className="text-lg font-bold text-[#F5F3EF]">{purchases.length}</div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-[#141518] border border-[#26272C] text-center">
+                      <div className="text-[11px] text-[#A5A5A5]">Subscriptions</div>
+                      <div className="text-lg font-bold text-[#F2BD91]">{subscriptions.length}</div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-[#141518] border border-[#26272C] text-center">
+                      <div className="text-[11px] text-[#A5A5A5]">Reminders</div>
+                      <div className="text-lg font-bold text-[#58C286]">{reminders.length}</div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-[#141518] border border-[#26272C] text-center">
+                      <div className="text-[11px] text-[#A5A5A5]">Receipts</div>
+                      <div className="text-lg font-bold text-[#7FB2FF]">{receipts.length}</div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={handleReloadSampleData}
+                      className="px-4 py-2.5 rounded-xl bg-[#F2BD91] hover:bg-[#F5C8A2] text-[#141518] text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      Load Starter Data
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsDatabaseModalOpen(true)}
+                      className="px-4 py-2.5 rounded-xl bg-[#25262C] hover:bg-[#2F3038] text-[#F5F3EF] text-xs font-medium flex items-center gap-2 transition-colors"
+                    >
+                      <Database className="w-3.5 h-3.5 text-[#58C286]" />
+                      Manage Cloud Vault
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleClearDatabase}
+                      className="px-4 py-2.5 rounded-xl bg-[#25262C] hover:bg-[#341B1E] text-[#A5A5A5] hover:text-[#F27474] text-xs font-medium ml-auto"
+                    >
+                      Reset Records
+                    </button>
+                  </div>
                 </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-1">
-                  <div className="p-3 rounded-xl bg-[#141518] border border-[#26272C] text-center">
-                    <div className="text-[11px] text-[#A5A5A5]">Purchases</div>
-                    <div className="text-lg font-bold text-[#F5F3EF]">{purchases.length}</div>
-                  </div>
-                  <div className="p-3 rounded-xl bg-[#141518] border border-[#26272C] text-center">
-                    <div className="text-[11px] text-[#A5A5A5]">Subscriptions</div>
-                    <div className="text-lg font-bold text-[#F2BD91]">{subscriptions.length}</div>
-                  </div>
-                  <div className="p-3 rounded-xl bg-[#141518] border border-[#26272C] text-center">
-                    <div className="text-[11px] text-[#A5A5A5]">Reminders</div>
-                    <div className="text-lg font-bold text-[#58C286]">{reminders.length}</div>
-                  </div>
-                  <div className="p-3 rounded-xl bg-[#141518] border border-[#26272C] text-center">
-                    <div className="text-[11px] text-[#A5A5A5]">Receipts</div>
-                    <div className="text-lg font-bold text-[#7FB2FF]">{receipts.length}</div>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={handleReloadSampleData}
-                    className="px-4 py-2.5 rounded-xl bg-[#F2BD91] hover:bg-[#F5C8A2] text-[#141518] text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-all"
-                  >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    Load Starter Data
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setIsDatabaseModalOpen(true)}
-                    className="px-4 py-2.5 rounded-xl bg-[#25262C] hover:bg-[#2F3038] text-[#F5F3EF] text-xs font-medium flex items-center gap-2 transition-colors"
-                  >
-                    <Database className="w-3.5 h-3.5 text-[#58C286]" />
-                    Manage Cloud Vault
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleClearDatabase}
-                    className="px-4 py-2.5 rounded-xl bg-[#25262C] hover:bg-[#341B1E] text-[#A5A5A5] hover:text-[#F27474] text-xs font-medium ml-auto"
-                  >
-                    Reset Records
-                  </button>
-                </div>
-              </div>
+              )}
             </div>
           )}
         </div>
@@ -5379,21 +5403,23 @@ export default function App() {
       )}
 
       {/* ====================================================================
-          MODAL 2C: DATABASE MANAGEMENT MODAL
+          MODAL 2C: DATABASE MANAGEMENT MODAL (Strictly Admin Only)
          ==================================================================== */}
-      <DatabaseModal
-        isOpen={isDatabaseModalOpen}
-        onClose={() => setIsDatabaseModalOpen(false)}
-        onReloadSampleData={handleReloadSampleData}
-        onClearDatabase={handleClearDatabase}
-        counts={{
-          purchases: purchases.length,
-          subscriptions: subscriptions.length,
-          reminders: reminders.length,
-          receipts: receipts.length,
-          cards: cards.length
-        }}
-      />
+      {isAdmin && isDatabaseModalOpen && (
+        <DatabaseModal
+          isOpen={isDatabaseModalOpen}
+          onClose={() => setIsDatabaseModalOpen(false)}
+          onReloadSampleData={handleReloadSampleData}
+          onClearDatabase={handleClearDatabase}
+          counts={{
+            purchases: purchases.length,
+            subscriptions: subscriptions.length,
+            reminders: reminders.length,
+            receipts: receipts.length,
+            cards: cards.length
+          }}
+        />
+      )}
 
       {/* ====================================================================
           MODAL 3: ADD / EDIT REMINDER FORM MODAL
