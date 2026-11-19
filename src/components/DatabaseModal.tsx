@@ -61,29 +61,29 @@ export function DatabaseModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-2.5 sm:p-4 overflow-hidden animate-fadeIn"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-[#191A1E] border border-[#2E2F36] rounded-2xl max-w-xl w-full p-6 shadow-2xl my-8 text-[#F5F3EF] space-y-5"
+        className="bg-[#191A1E] border border-[#2E2F36] rounded-2xl sm:rounded-3xl max-w-xl w-full max-h-[92dvh] sm:max-h-[88vh] flex flex-col shadow-2xl overflow-hidden text-[#F5F3EF]"
       >
-        {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#292A2F]">
-          <div className="flex items-center gap-3">
+        {/* Header (Sticky at top) */}
+        <div className="flex items-center justify-between px-4 py-3.5 sm:px-6 sm:py-4 border-b border-[#292A2F] shrink-0 bg-[#18191E]">
+          <div className="flex items-center gap-3 min-w-0">
             <div className="w-10 h-10 rounded-xl bg-[#152B1F] border border-[#224A35] flex items-center justify-center shrink-0">
               <Database className="w-5 h-5 text-[#58C286]" />
             </div>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-semibold text-[#F5F3EF]">
+                <h2 className="text-base sm:text-lg font-semibold text-[#F5F3EF] truncate">
                   Keeper Cloud Vault
                 </h2>
-                <span className="text-[11px] px-2.5 py-0.5 rounded-full font-semibold border bg-[#152B1F] text-[#58C286] border-[#224A35]">
-                  ● Cloud Storage Connected
+                <span className="text-[10px] sm:text-[11px] px-2 py-0.5 rounded-full font-semibold border bg-[#152B1F] text-[#58C286] border-[#224A35] shrink-0">
+                  ● Connected
                 </span>
               </div>
-              <p className="text-xs text-[#A5A5A5] mt-0.5">
+              <p className="text-xs text-[#A5A5A5] mt-0.5 truncate hidden sm:block">
                 Real-time transactional cloud storage with instant multi-device synchronization.
               </p>
             </div>
@@ -91,11 +91,14 @@ export function DatabaseModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg bg-[#23242A] text-[#A5A5A5] hover:text-white"
+            className="p-1.5 rounded-lg bg-[#23242A] text-[#A5A5A5] hover:text-white shrink-0 ml-2"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {/* Scrollable Content Body */}
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
 
         {/* Vault Status Card */}
         <div className="p-4 rounded-xl bg-[#131E17] border border-[#224A35] flex flex-col gap-2">
@@ -184,8 +187,10 @@ export function DatabaseModal({
           </button>
         </div>
 
-        {/* Clear Database Danger Zone */}
-        <div className="pt-2 flex items-center justify-between text-xs text-[#A5A5A5]">
+        </div>
+
+        {/* Clear Database Danger Zone & Done Footer (Sticky) */}
+        <div className="px-4 py-3 sm:px-6 sm:py-3.5 border-t border-[#292A2F] bg-[#16171B] shrink-0 flex items-center justify-between text-xs text-[#A5A5A5]">
           <button
             type="button"
             disabled={clearing}

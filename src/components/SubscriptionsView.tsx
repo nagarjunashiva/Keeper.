@@ -180,7 +180,7 @@ export function SubscriptionsView({
       </div>
 
       {/* KPI Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3.5">
         <div className="bg-[#191A1E] border border-[#292A2F] rounded-2xl p-4 flex items-center gap-3.5">
           <div className="w-10 h-10 rounded-xl bg-[#2D231B] border border-[#483728] flex items-center justify-center shrink-0">
             <CreditCard className="w-5 h-5 text-[#F2BD91]" />
@@ -250,7 +250,7 @@ export function SubscriptionsView({
             Quick Add Popular Mobile & Digital Plans
           </span>
         </div>
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1.5 text-xs scrollbar-none [&::-webkit-scrollbar]:hidden" style={{ WebkitOverflowScrolling: 'touch' }}>
           {SUBSCRIPTION_PRESETS.map((preset) => (
             <button
               key={preset.name}

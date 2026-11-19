@@ -196,8 +196,8 @@ export function CardAccountModal({
       : CREDIT_CARD_PRESETS;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-[#141518] border border-[#292A2F] rounded-2xl w-full max-w-xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 md:p-6 overflow-hidden bg-black/80 backdrop-blur-sm animate-fadeIn">
+      <div className="bg-[#141518] border border-[#292A2F] rounded-2xl sm:rounded-3xl w-full max-w-xl max-h-[92dvh] sm:max-h-[88vh] flex flex-col shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="px-5 py-4 border-b border-[#25262B] flex items-center justify-between shrink-0 bg-[#18191E]">
           <div className="flex items-center gap-3">

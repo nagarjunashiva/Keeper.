@@ -369,7 +369,7 @@ export function AuthPortal({ onAuthenticated, onClose, promptReason }: AuthPorta
       {/* ====================================================================
           4. THE KEEPER VAULT AUTH MODAL (TITANIUM GLASSMORPHISM)
          ==================================================================== */}
-      <div className="w-full max-w-md bg-[#131417]/92 border border-[#27282F] rounded-2xl shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_40px_rgba(242,189,145,0.06)] p-6 sm:p-8 relative z-10 backdrop-blur-2xl before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-[#F2BD91]/50 before:to-transparent">
+      <div className="w-full max-w-md max-h-[92dvh] overflow-y-auto bg-[#131417]/92 border border-[#27282F] rounded-2xl shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_40px_rgba(242,189,145,0.06)] p-5 sm:p-8 relative z-10 backdrop-blur-2xl before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-[#F2BD91]/50 before:to-transparent">
         {/* Modal Close Button */}
         {onClose && (
           <button

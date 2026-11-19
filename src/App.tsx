@@ -2329,7 +2329,7 @@ export default function App() {
       {/* ====================================================================
           MAIN CONTENT AREA WITH ATMOSPHERIC DUSK MOUNTAIN BACKDROP
          ==================================================================== */}
-      <main className="flex-1 min-w-0 relative overflow-x-hidden pb-20 lg:pb-10">
+      <main className="flex-1 min-w-0 relative overflow-x-hidden pb-32 sm:pb-36 lg:pb-12">
         <div className="absolute top-0 left-0 right-0 h-[310px] pointer-events-none overflow-hidden z-0">
           <img
             src={HERO_BG}
@@ -5137,7 +5137,7 @@ export default function App() {
          ==================================================================== */}
       <nav
         aria-label="Mobile Bottom Navigation"
-        className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-[#151619]/95 backdrop-blur-md border-t border-[#292A2F] grid grid-cols-5 py-1.5 px-2"
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-[#151619]/95 backdrop-blur-md border-t border-[#292A2F] grid grid-cols-5 py-2 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] shadow-[0_-10px_25px_rgba(0,0,0,0.5)]"
       >
         {(
           [
@@ -5938,32 +5938,34 @@ function PurchaseFormModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-2.5 sm:p-4 md:p-6 overflow-hidden animate-fadeIn"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-[#191A1E] border border-[#2E2F36] rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8"
+        className="bg-[#191A1E] border border-[#2E2F36] rounded-2xl sm:rounded-3xl max-w-2xl w-full max-h-[92dvh] sm:max-h-[88vh] flex flex-col shadow-2xl overflow-hidden"
       >
-        <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#292A2F]">
+        {/* Header (Sticky at top) */}
+        <div className="flex items-center justify-between px-4 py-3.5 sm:px-6 sm:py-4 border-b border-[#292A2F] shrink-0 bg-[#18191E]">
           <div>
-            <h2 className="text-lg font-semibold text-[#F5F3EF]">
+            <h2 className="text-base sm:text-lg font-semibold text-[#F5F3EF]">
               {initialPurchase ? 'Edit Purchase' : 'Add New Purchase'}
             </h2>
-            <p className="text-xs text-[#A5A5A5]">
+            <p className="text-xs text-[#A5A5A5] hidden sm:block">
               Warranty expiry and return deadlines are calculated automatically.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg bg-[#23242A] text-[#A5A5A5] hover:text-white"
+            className="p-1.5 rounded-lg bg-[#23242A] text-[#A5A5A5] hover:text-white shrink-0 ml-2"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Scrollable Form Body */}
+        <form id="purchase-modal-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
           {errorMsg && (
             <div className="p-3 rounded-xl bg-[#341B1E] border border-[#4D262A] text-xs text-[#F27474]">
               {errorMsg}
@@ -6249,22 +6251,27 @@ function PurchaseFormModal({
             </label>
           )}
 
-          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#292A2F]">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-[#25262C] text-xs text-[#F5F3EF]"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-5 py-2 rounded-xl bg-[#F2BD91] hover:bg-[#F5C8A2] text-[#141518] text-xs font-semibold"
-            >
-              {initialPurchase ? 'Save Changes' : 'Register Purchase'}
-            </button>
-          </div>
+          {/* Spacing for mobile scrolling */}
+          <div className="h-2" />
         </form>
+
+        {/* Sticky Action Footer */}
+        <div className="flex items-center justify-end gap-2.5 px-4 py-3 sm:px-6 sm:py-3.5 border-t border-[#292A2F] bg-[#16171B] shrink-0">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2.5 rounded-xl bg-[#25262C] hover:bg-[#303138] text-xs font-semibold text-[#F5F3EF]"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            form="purchase-modal-form"
+            className="px-5 py-2.5 rounded-xl bg-[#F2BD91] hover:bg-[#F5C8A2] text-[#141518] text-xs font-semibold shadow-md active:scale-95"
+          >
+            {initialPurchase ? 'Save Changes' : 'Register Purchase'}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -6315,14 +6322,14 @@ function ReminderFormModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-2.5 sm:p-4 overflow-hidden animate-fadeIn"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-[#191A1E] border border-[#2E2F36] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4"
+        className="bg-[#191A1E] border border-[#2E2F36] rounded-2xl max-w-md w-full max-h-[92dvh] sm:max-h-[88vh] flex flex-col shadow-2xl overflow-hidden"
       >
-        <div className="flex items-center justify-between pb-3 border-b border-[#292A2F]">
+        <div className="flex items-center justify-between px-4 py-3.5 sm:px-6 sm:py-4 border-b border-[#292A2F] shrink-0 bg-[#18191E]">
           <h3 className="text-base font-semibold text-[#F5F3EF]">
             {initialReminder ? 'Edit Reminder' : 'Create Reminder'}
           </h3>
@@ -6335,7 +6342,7 @@ function ReminderFormModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3.5">
+        <form id="reminder-modal-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3.5">
           <div>
             <label className="block text-xs text-[#A5A5A5] mb-1">Associated Product</label>
             <select
@@ -6402,22 +6409,25 @@ function ReminderFormModal({
             />
           </div>
 
-          <div className="flex items-center justify-end gap-2.5 pt-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-[#25262C] text-xs text-[#F5F3EF]"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-5 py-2 rounded-xl bg-[#F2BD91] text-[#141518] text-xs font-semibold"
-            >
-              {initialReminder ? 'Update Reminder' : 'Save Reminder'}
-            </button>
-          </div>
+          <div className="h-2" />
         </form>
+
+        <div className="flex items-center justify-end gap-2.5 px-4 py-3 sm:px-6 sm:py-3.5 border-t border-[#292A2F] bg-[#16171B] shrink-0">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 rounded-xl bg-[#25262C] hover:bg-[#303138] text-xs text-[#F5F3EF]"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            form="reminder-modal-form"
+            className="px-5 py-2 rounded-xl bg-[#F2BD91] hover:bg-[#F5C8A2] text-[#141518] text-xs font-semibold shadow-md active:scale-95"
+          >
+            {initialReminder ? 'Update Reminder' : 'Save Reminder'}
+          </button>
+        </div>
       </div>
     </div>
   );

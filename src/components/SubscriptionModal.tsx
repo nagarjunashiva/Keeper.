@@ -183,24 +183,24 @@ export function SubscriptionModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-2.5 sm:p-4 md:p-6 overflow-hidden animate-fadeIn"
       onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-[#191A1E] border border-[#2E2F36] rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8 text-[#F5F3EF]"
+        className="bg-[#191A1E] border border-[#2E2F36] rounded-2xl sm:rounded-3xl max-w-2xl w-full max-h-[92dvh] sm:max-h-[88vh] flex flex-col shadow-2xl overflow-hidden text-[#F5F3EF]"
       >
-        {/* Header */}
-        <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#292A2F]">
-          <div className="flex items-center gap-3">
+        {/* Header (Sticky at top) */}
+        <div className="flex items-center justify-between px-4 py-3.5 sm:px-6 sm:py-4 border-b border-[#292A2F] shrink-0 bg-[#18191E]">
+          <div className="flex items-center gap-3 min-w-0">
             <div className="w-10 h-10 rounded-xl bg-[#2D231B] border border-[#483728] flex items-center justify-center shrink-0">
               <CreditCard className="w-5 h-5 text-[#F2BD91]" />
             </div>
-            <div>
-              <h2 className="text-lg font-semibold text-[#F5F3EF]">
+            <div className="min-w-0">
+              <h2 className="text-base sm:text-lg font-semibold text-[#F5F3EF] truncate">
                 {initialSubscription ? 'Edit Subscription & Auto-Pay' : 'Add Mobile / Recurring Subscription'}
               </h2>
-              <p className="text-xs text-[#A5A5A5]">
+              <p className="text-xs text-[#A5A5A5] truncate hidden sm:block">
                 Track automated debits, mobile recharges, and schedule payment alerts.
               </p>
             </div>
@@ -208,36 +208,36 @@ export function SubscriptionModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg bg-[#23242A] text-[#A5A5A5] hover:text-white"
+            className="p-1.5 rounded-lg bg-[#23242A] text-[#A5A5A5] hover:text-white shrink-0 ml-2"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Quick Presets for 1-Click addition */}
-        {!initialSubscription && (
-          <div className="mb-4 p-3 rounded-xl bg-[#141518] border border-[#26272C]">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#F2BD91] mb-2">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Quick Presets (Click to autofill)</span>
+        {/* Scrollable Form Body */}
+        <form id="sub-modal-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+          {/* Quick Presets for 1-Click addition */}
+          {!initialSubscription && (
+            <div className="p-3 rounded-xl bg-[#141518] border border-[#26272C]">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-[#F2BD91] mb-2">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Quick Presets (Click to autofill)</span>
+              </div>
+              <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
+                {SUBSCRIPTION_PRESETS.map((preset) => (
+                  <button
+                    key={preset.name}
+                    type="button"
+                    onClick={() => handleApplyPreset(preset)}
+                    className="px-2.5 py-1.5 rounded-xl text-xs font-medium bg-[#1A1B20] hover:bg-[#2A2622] hover:border-[#F2BD91]/60 border border-[#2B2C35] text-[#D8D6D2] hover:text-[#F2BD91] transition-all flex items-center gap-2 group shadow-sm"
+                  >
+                    <BrandLogo provider={preset.provider} size="xs" />
+                    <span className="font-medium">{preset.provider}: {preset.name.split(' ')[1] || preset.name}</span>
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
-              {SUBSCRIPTION_PRESETS.map((preset) => (
-                <button
-                  key={preset.name}
-                  type="button"
-                  onClick={() => handleApplyPreset(preset)}
-                  className="px-2.5 py-1.5 rounded-xl text-xs font-medium bg-[#1A1B20] hover:bg-[#2A2622] hover:border-[#F2BD91]/60 border border-[#2B2C35] text-[#D8D6D2] hover:text-[#F2BD91] transition-all flex items-center gap-2 group shadow-sm"
-                >
-                  <BrandLogo provider={preset.provider} size="xs" />
-                  <span className="font-medium">{preset.provider}: {preset.name.split(' ')[1] || preset.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
+          )}
           {errorMsg && (
             <div className="p-3 rounded-xl bg-[#341B1E] border border-[#4D262A] text-xs text-[#F27474]">
               {errorMsg}
@@ -578,23 +578,27 @@ export function SubscriptionModal({
             />
           </div>
 
-          {/* Form Actions */}
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#292A2F]">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2.5 rounded-xl bg-[#25262C] hover:bg-[#303138] text-xs font-semibold text-[#F5F3EF] transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-5 py-2.5 rounded-xl bg-[#F2BD91] hover:bg-[#F5C8A2] text-[#141518] text-xs font-semibold shadow-lg shadow-black/20 transition-all active:scale-[0.98]"
-            >
-              {initialSubscription ? 'Update Subscription' : 'Add Subscription & Auto-Pay'}
-            </button>
-          </div>
+          {/* Bottom spacing to ensure last fields have breathing room */}
+          <div className="h-2" />
         </form>
+
+        {/* Sticky Action Footer */}
+        <div className="flex items-center justify-end gap-3 px-4 py-3 sm:px-6 sm:py-3.5 border-t border-[#292A2F] bg-[#16171B] shrink-0">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2.5 rounded-xl bg-[#25262C] hover:bg-[#303138] text-xs font-semibold text-[#F5F3EF] transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            form="sub-modal-form"
+            className="px-5 py-2.5 rounded-xl bg-[#F2BD91] hover:bg-[#F5C8A2] text-[#141518] text-xs font-semibold shadow-lg shadow-black/20 transition-all active:scale-[0.98]"
+          >
+            {initialSubscription ? 'Update Subscription' : 'Add Subscription & Auto-Pay'}
+          </button>
+        </div>
       </div>
     </div>
   );
