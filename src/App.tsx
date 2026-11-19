@@ -2645,29 +2645,6 @@ export default function App() {
             </div>
           </header>
 
-          {/* Free Exploration Mode Banner (For Unregistered / Guest Users) */}
-          {!authSession && (
-            <div className="mb-6 px-4 py-3 rounded-2xl bg-gradient-to-r from-[#241F1B] via-[#1B1B1F] to-[#15161A] border border-[#3E3127] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-[#E5E3DF] shadow-md animate-fadeIn">
-              <div className="flex items-center gap-2.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#F2BD91] shadow-[0_0_8px_#F2BD91] animate-pulse shrink-0" />
-                <span className="font-medium">
-                  <strong className="text-[#F2BD91]">Free Exploration Mode</strong> &bull; Feel free to test and explore all views. Sign in anytime to add and save your cards, purchases, and subscriptions!
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setAuthPromptReason('Create an account or sign in to save your cards, purchases & auto-pay schedules.');
-                  setPendingAction(null);
-                  setIsAuthModalOpen(true);
-                }}
-                className="px-3.5 py-1.5 rounded-xl bg-[#F2BD91] hover:bg-[#F0B280] text-[#141518] text-xs font-bold shrink-0 transition-all shadow-sm active:scale-95"
-              >
-                Sign In to Save
-              </button>
-            </div>
-          )}
-
           {/* ================================================================
               VIEW 1: DASHBOARD
              ================================================================ */}
@@ -3072,8 +3049,10 @@ export default function App() {
                         <button
                           type="button"
                           onClick={() => {
-                            setEditingReminder(null);
-                            setIsReminderModalOpen(true);
+                            requireAuth('Sign in to schedule custom reminders in your vault.', () => {
+                              setEditingReminder(null);
+                              setIsReminderModalOpen(true);
+                            });
                           }}
                           className="mt-2.5 text-xs text-[#F2BD91] hover:underline font-medium"
                         >
@@ -3606,10 +3585,12 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => {
-                    setEditingReceipt(null);
-                    setPendingReceiptFile(null);
-                    setReceiptModalPurchaseId(uploadPurchaseId || (purchases[0]?.id ?? ''));
-                    setIsReceiptModalOpen(true);
+                    requireAuth('Sign in or create an account to upload receipts and invoices.', () => {
+                      setEditingReceipt(null);
+                      setPendingReceiptFile(null);
+                      setReceiptModalPurchaseId(uploadPurchaseId || (purchases[0]?.id ?? ''));
+                      setIsReceiptModalOpen(true);
+                    });
                   }}
                   className="self-start sm:self-auto px-5 py-2.5 rounded-xl bg-[#F2BD91] hover:bg-[#F5C8A2] text-[#141518] font-semibold text-sm flex items-center gap-2 shadow-md transition-colors"
                 >
@@ -3628,7 +3609,10 @@ export default function App() {
                 onDrop={(e) => {
                   e.preventDefault();
                   setIsDraggingOver(false);
-                  handleFilesUploaded(e.dataTransfer.files);
+                  const files = e.dataTransfer.files;
+                  requireAuth('Sign in to upload and store receipts.', () => {
+                    handleFilesUploaded(files);
+                  });
                 }}
                 className={`bg-[#191A1E] border-2 border-dashed rounded-2xl p-6 sm:p-8 text-center transition-all ${
                   isDraggingOver
@@ -3672,7 +3656,12 @@ export default function App() {
                       type="file"
                       accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
                       multiple
-                      onChange={(e) => handleFilesUploaded(e.target.files)}
+                      onChange={(e) => {
+                        const files = e.target.files;
+                        requireAuth('Sign in to upload receipts.', () => {
+                          handleFilesUploaded(files);
+                        });
+                      }}
                       className="hidden"
                     />
                   </label>
@@ -3825,9 +3814,11 @@ export default function App() {
                               <button
                                 type="button"
                                 onClick={() => {
-                                  setEditingReceipt(rec);
-                                  setPendingReceiptFile(null);
-                                  setIsReceiptModalOpen(true);
+                                  requireAuth('Sign in to edit this receipt in your vault.', () => {
+                                    setEditingReceipt(rec);
+                                    setPendingReceiptFile(null);
+                                    setIsReceiptModalOpen(true);
+                                  });
                                 }}
                                 title="Edit invoice details and notes"
                                 className="px-2.5 py-1.5 rounded-lg bg-[#24252B] hover:bg-[#2F3038] text-[#F5F3EF] flex items-center gap-1 text-xs"
@@ -4213,8 +4204,10 @@ export default function App() {
                             <button
                               type="button"
                               onClick={() => {
-                                setClaimModalPurchase(item);
-                                setIsClaimModalOpen(true);
+                                requireAuth('Sign in to claim warranty support & OEM dossiers.', () => {
+                                  setClaimModalPurchase(item);
+                                  setIsClaimModalOpen(true);
+                                });
                               }}
                               className="px-3 py-1.5 rounded-lg bg-[#24252B] hover:bg-[#303138] text-[#F2BD91] hover:text-[#F5C8A2] font-semibold flex items-center gap-1.5 transition-colors"
                             >
@@ -4280,8 +4273,10 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => {
-                      setEditingReminder(null);
-                      setIsReminderModalOpen(true);
+                      requireAuth('Sign in or create an account to schedule custom alerts.', () => {
+                        setEditingReminder(null);
+                        setIsReminderModalOpen(true);
+                      });
                     }}
                     className="px-4 py-2.5 rounded-xl bg-[#F2BD91] hover:bg-[#F5C8A2] text-[#141518] font-semibold text-xs flex items-center gap-1.5"
                   >

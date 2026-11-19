@@ -379,14 +379,6 @@ export function AuthPortal({ onAuthenticated, onClose, promptReason }: AuthPorta
           </p>
         </div>
 
-        {/* Action Prompt Reason Banner */}
-        {promptReason && (
-          <div className="mb-5 p-3 rounded-xl bg-[#25201C] border border-[#4E3929] text-[#F2BD91] text-xs flex items-start gap-2.5 shadow-sm">
-            <Sparkles className="w-4 h-4 shrink-0 mt-0.5 text-[#F2BD91]" />
-            <span className="leading-relaxed font-medium">{promptReason}</span>
-          </div>
-        )}
-
         {/* Tab switchers for Sign In / Sign Up */}
         {(mode === 'signin' || mode === 'signup') && (
           <div className="flex p-1 bg-[#101113] rounded-xl border border-[#232429] mb-5">
