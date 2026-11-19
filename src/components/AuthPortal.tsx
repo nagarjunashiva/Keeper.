@@ -290,60 +290,67 @@ export function AuthPortal({ onAuthenticated, onClose, promptReason }: AuthPorta
   };
 
   return (
-    <div className={`min-h-screen bg-[#090A0C] text-[#F5F3EF] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans selection:bg-[#F2BD91]/30 selection:text-[#F2BD91] ${
-      onClose ? 'fixed inset-0 z-50 bg-black/85 backdrop-blur-md overflow-y-auto animate-fadeIn' : ''
+    <div className={`min-h-screen bg-[#08090B] text-[#F5F3EF] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans selection:bg-[#F2BD91]/30 selection:text-[#F2BD91] ${
+      onClose ? 'fixed inset-0 z-50 bg-[#08090B]/92 backdrop-blur-xl overflow-y-auto animate-fadeIn' : ''
     }`}>
       {/* ====================================================================
           1. FINE GEOMETRIC FINTECH GRID OVERLAY WITH RADIAL VIGNETTE
          ==================================================================== */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-40"
+        className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage: `
-            linear-gradient(to right, rgba(242, 189, 145, 0.06) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(242, 189, 145, 0.06) 1px, transparent 1px)
+            linear-gradient(to right, rgba(242, 189, 145, 0.12) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(242, 189, 145, 0.12) 1px, transparent 1px)
           `,
-          backgroundSize: '40px 40px',
-          maskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, #000 25%, transparent 75%)',
-          WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, #000 25%, transparent 75%)'
+          backgroundSize: '44px 44px',
+          maskImage: 'radial-gradient(ellipse 80% 70% at 50% 50%, #000 35%, transparent 85%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 80% 70% at 50% 50%, #000 35%, transparent 85%)'
         }}
       />
 
       {/* ====================================================================
-          2. CONCENTRIC TITANIUM VAULT RINGS & ARCHITECTURAL DIAL
+          2. CONCENTRIC TITANIUM VAULT RINGS & PRECISION RADAR DIAL
          ==================================================================== */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-        {/* Outermost Ring */}
-        <div className="w-[960px] h-[960px] rounded-full border border-white/[0.03] absolute animate-[spin_240s_linear_infinite]" />
+        {/* Outermost Orbit Ring */}
+        <div className="w-[960px] h-[960px] rounded-full border border-[#F2BD91]/20 absolute animate-[spin_260s_linear_infinite] shadow-[0_0_50px_rgba(242,189,145,0.06)]" />
 
-        {/* Mid Dashed Vault Ring */}
+        {/* Mid Dashed Radar Vault Ring */}
         <div
-          className="w-[720px] h-[720px] rounded-full border border-[#F2BD91]/10 absolute animate-[spin_160s_linear_infinite_reverse]"
+          className="w-[740px] h-[740px] rounded-full border-2 border-[#F2BD91]/35 absolute animate-[spin_120s_linear_infinite_reverse] shadow-[0_0_40px_rgba(242,189,145,0.12)]"
           style={{ borderStyle: 'dashed' }}
         />
 
         {/* Inner Security Ring */}
-        <div className="w-[500px] h-[500px] rounded-full border border-emerald-500/[0.08] absolute" />
+        <div className="w-[540px] h-[540px] rounded-full border border-[#F2BD91]/25 absolute shadow-[0_0_30px_rgba(242,189,145,0.08)]" />
+
+        {/* Innermost Emerald Protection Ring */}
+        <div className="w-[380px] h-[380px] rounded-full border border-emerald-500/25 absolute" />
 
         {/* Center Precision Vault Crosshairs */}
-        <div className="absolute w-[980px] h-[1px] bg-gradient-to-r from-transparent via-white/[0.04] to-transparent" />
-        <div className="absolute h-[980px] w-[1px] bg-gradient-to-b from-transparent via-white/[0.04] to-transparent" />
+        <div className="absolute w-[1100px] h-[1px] bg-gradient-to-r from-transparent via-[#F2BD91]/40 to-transparent" />
+        <div className="absolute h-[1100px] w-[1px] bg-gradient-to-b from-transparent via-[#F2BD91]/40 to-transparent" />
+
+        {/* 45-Degree Diagonal Vault Aligners */}
+        <div className="absolute w-[900px] h-[1px] bg-gradient-to-r from-transparent via-[#F2BD91]/20 to-transparent rotate-45" />
+        <div className="absolute w-[900px] h-[1px] bg-gradient-to-r from-transparent via-[#F2BD91]/20 to-transparent -rotate-45" />
       </div>
 
       {/* ====================================================================
           3. CINEMATIC MULTI-LAYER RADIANT GLOW (WARM AMBER + EMERALD AURORA)
          ==================================================================== */}
       {/* Top Center Champagne Amber Glow */}
-      <div className="absolute -top-[12%] left-1/2 -translate-x-1/2 w-[720px] h-[480px] bg-gradient-to-b from-[#F2BD91]/20 via-[#E59866]/10 to-transparent rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute -top-[10%] left-1/2 -translate-x-1/2 w-[760px] h-[500px] bg-gradient-to-b from-[#F2BD91]/30 via-[#E59866]/15 to-transparent rounded-full blur-[130px] pointer-events-none" />
 
       {/* Bottom Right Emerald Protection Glow */}
-      <div className="absolute -bottom-[15%] -right-[10%] w-[580px] h-[580px] bg-[#5CE095]/12 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute -bottom-[15%] -right-[10%] w-[580px] h-[580px] bg-[#5CE095]/18 rounded-full blur-[140px] pointer-events-none" />
 
       {/* Bottom Left Deep Obsidian Glow */}
-      <div className="absolute -bottom-[10%] -left-[10%] w-[500px] h-[500px] bg-[#F2BD91]/8 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute -bottom-[15%] -left-[10%] w-[520px] h-[520px] bg-[#F2BD91]/14 rounded-full blur-[140px] pointer-events-none" />
 
       {/* Center Behind Card Halo */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] bg-[#F2BD91]/8 rounded-full blur-[90px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[480px] bg-[#F2BD91]/18 rounded-full blur-[90px] pointer-events-none" />
 
       {/* ====================================================================
           4. THE KEEPER VAULT AUTH MODAL (TITANIUM GLASSMORPHISM)
