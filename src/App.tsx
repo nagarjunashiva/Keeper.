@@ -66,7 +66,7 @@ import {
   normalizeMonthlyAmount
 } from './types/subscription';
 import { CardAccountRecord } from './types/card';
-import { UnifiedDatabaseManager, generateRealStarterDataset } from './lib/database';
+import { UnifiedDatabaseManager } from './lib/database';
 import { SubscriptionModal } from './components/SubscriptionModal';
 import { SubscriptionsView } from './components/SubscriptionsView';
 import { BrandLogo } from './components/BrandLogos';
@@ -653,70 +653,7 @@ function generateInvoiceHTML(receipt: ReceiptRecord, purchase?: ComputedPurchase
 }
 
 // ============================================================================
-// RICH SAMPLE CARDS FOR FREE GUEST EXPLORATION
-// ============================================================================
-const SAMPLE_PREVIEW_CARDS: CardAccountRecord[] = [
-  {
-    id: 'card_sample_hdfc',
-    name: 'HDFC Millennia Credit Card',
-    bank: 'HDFC Bank',
-    type: 'credit_card',
-    last4: '4821',
-    expiryMMYY: '08/28',
-    billingDueDate: 5,
-    statementDate: 15,
-    creditLimit: 150000,
-    dailyLimit: 0,
-    currentBalanceOrSavings: 0,
-    expenses: [
-      { id: 'exp_1', title: 'Apple Store BKC', amount: 119900, category: 'Electronics', date: '2026-09-20' },
-      { id: 'exp_2', title: 'Swiggy Gourmet', amount: 1450, category: 'Dining', date: '2026-11-18' }
-    ],
-    cardColor: 'sapphire',
-    notes: 'Primary shopping & rewards card with 5% cashback on Amazon & Swiggy.',
-    createdAt: '2026-09-20T00:00:00Z'
-  },
-  {
-    id: 'card_sample_icici',
-    name: 'ICICI Amazon Pay Credit Card',
-    bank: 'ICICI Bank',
-    type: 'credit_card',
-    last4: '1092',
-    expiryMMYY: '11/29',
-    billingDueDate: 12,
-    statementDate: 22,
-    creditLimit: 200000,
-    dailyLimit: 0,
-    currentBalanceOrSavings: 0,
-    expenses: [
-      { id: 'exp_3', title: 'Sony WH-1000XM5', amount: 24990, category: 'Electronics', date: '2026-08-10' }
-    ],
-    cardColor: 'gold',
-    notes: 'Lifetime free card. 5% unlimited cashback on Amazon purchases.',
-    createdAt: '2026-08-10T00:00:00Z'
-  },
-  {
-    id: 'card_sample_salary',
-    name: 'HDFC Classic Salary Account',
-    bank: 'HDFC Bank',
-    type: 'savings_account',
-    last4: '9920',
-    expiryMMYY: '',
-    billingDueDate: 0,
-    statementDate: 0,
-    creditLimit: 0,
-    dailyLimit: 0,
-    currentBalanceOrSavings: 148500,
-    savingsGoal: 250000,
-    expenses: [],
-    cardColor: 'emerald',
-    notes: 'Primary salary account. Emergency fund & automated SIP hub.',
-    createdAt: '2026-01-01T00:00:00Z'
-  }
-];
-
-// ============================================================================
-// MAIN APPLICATION COMPONENT
+// MAIN APPLICATION COMPONENT (Clean Slate, 0 Fake Data)
 // ============================================================================
 export default function App() {
   // Initial Application Boot & Loading Screen State
@@ -751,15 +688,14 @@ export default function App() {
   const [subscriptions, setSubscriptions] = useState<SubscriptionRecord[]>([]);
   const [cards, setCards] = useState<CardAccountRecord[]>([]);
 
-  // Load authenticated user's isolated data, or provide rich sample exploration data for guests
+  // Load authenticated user's isolated data from Cloud Database Vault (Starts 100% empty, 0 fake data)
   useEffect(() => {
     if (!authSession) {
-      const starter = generateRealStarterDataset('demo_guest', profile.referenceDate);
-      setPurchases(starter.purchases);
-      setSubscriptions(starter.subscriptions);
-      setReminders(starter.reminders);
-      setReceipts(starter.receipts);
-      setCards(SAMPLE_PREVIEW_CARDS);
+      setPurchases([]);
+      setSubscriptions([]);
+      setReminders([]);
+      setReceipts([]);
+      setCards([]);
       setDatabaseLoading(false);
       return;
     }
