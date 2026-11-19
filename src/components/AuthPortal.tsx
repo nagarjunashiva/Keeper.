@@ -11,7 +11,12 @@ import {
   Eye,
   EyeOff,
   ShieldCheck,
-  Shield
+  Shield,
+  CreditCard,
+  Zap,
+  Calendar,
+  Sparkles,
+  TrendingUp
 } from 'lucide-react';
 import type { AuthAccount } from '../App';
 
@@ -282,15 +287,142 @@ export function AuthPortal({ onAuthenticated }: AuthPortalProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#0C0D0E] text-[#F5F3EF] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans">
-      {/* Background Ambient Glow */}
-      <div className="absolute top-[-15%] left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#F2BD91]/5 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] bg-[#58C286]/5 rounded-full blur-[120px] pointer-events-none" />
+    <div className="min-h-screen bg-[#090A0C] text-[#F5F3EF] flex items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans selection:bg-[#F2BD91]/30 selection:text-[#F2BD91]">
+      {/* ====================================================================
+          1. FINE GEOMETRIC FINTECH GRID OVERLAY WITH RADIAL VIGNETTE
+         ==================================================================== */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-40"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, rgba(242, 189, 145, 0.06) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(242, 189, 145, 0.06) 1px, transparent 1px)
+          `,
+          backgroundSize: '40px 40px',
+          maskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, #000 25%, transparent 75%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, #000 25%, transparent 75%)'
+        }}
+      />
 
-      <div className="w-full max-w-md bg-[#141518] border border-[#25262C] rounded-2xl shadow-2xl p-6 sm:p-8 relative z-10 backdrop-blur-md">
+      {/* ====================================================================
+          2. CONCENTRIC TITANIUM VAULT RINGS & ARCHITECTURAL DIAL
+         ==================================================================== */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+        {/* Outermost Ring */}
+        <div className="w-[960px] h-[960px] rounded-full border border-white/[0.03] absolute animate-[spin_240s_linear_infinite]" />
+
+        {/* Mid Dashed Vault Ring */}
+        <div
+          className="w-[720px] h-[720px] rounded-full border border-[#F2BD91]/10 absolute animate-[spin_160s_linear_infinite_reverse]"
+          style={{ borderStyle: 'dashed' }}
+        />
+
+        {/* Inner Security Ring */}
+        <div className="w-[500px] h-[500px] rounded-full border border-emerald-500/[0.08] absolute" />
+
+        {/* Center Precision Vault Crosshairs */}
+        <div className="absolute w-[980px] h-[1px] bg-gradient-to-r from-transparent via-white/[0.04] to-transparent" />
+        <div className="absolute h-[980px] w-[1px] bg-gradient-to-b from-transparent via-white/[0.04] to-transparent" />
+      </div>
+
+      {/* ====================================================================
+          3. CINEMATIC MULTI-LAYER RADIANT GLOW (WARM AMBER + EMERALD AURORA)
+         ==================================================================== */}
+      {/* Top Center Champagne Amber Glow */}
+      <div className="absolute -top-[12%] left-1/2 -translate-x-1/2 w-[720px] h-[480px] bg-gradient-to-b from-[#F2BD91]/20 via-[#E59866]/10 to-transparent rounded-full blur-[140px] pointer-events-none" />
+
+      {/* Bottom Right Emerald Protection Glow */}
+      <div className="absolute -bottom-[15%] -right-[10%] w-[580px] h-[580px] bg-[#5CE095]/12 rounded-full blur-[150px] pointer-events-none" />
+
+      {/* Bottom Left Deep Obsidian Glow */}
+      <div className="absolute -bottom-[10%] -left-[10%] w-[500px] h-[500px] bg-[#F2BD91]/8 rounded-full blur-[140px] pointer-events-none" />
+
+      {/* Center Behind Card Halo */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] bg-[#F2BD91]/8 rounded-full blur-[90px] pointer-events-none" />
+
+      {/* ====================================================================
+          4. AMBIENT HUD TELEMETRY & SYSTEM STATUS (DESKTOP)
+         ==================================================================== */}
+      <div className="absolute top-7 left-8 hidden xl:flex items-center gap-3 text-[11px] font-mono tracking-widest text-[#A5A5A5]/60 pointer-events-none">
+        <div className="w-2 h-2 rounded-full bg-[#5CE095] shadow-[0_0_8px_#5CE095] animate-pulse" />
+        <span className="text-[#E2E1DD] font-semibold">KEEPER VAULT OS</span>
+        <span className="text-[#555660]">/</span>
+        <span>SYS.V2.4</span>
+      </div>
+
+      <div className="absolute top-7 right-8 hidden xl:flex items-center gap-3 text-[11px] font-mono tracking-wider text-[#A5A5A5]/60 pointer-events-none">
+        <span className="px-2.5 py-1 rounded-md border border-[#2B2D36] bg-[#141519]/70 text-[#C5C5CB] backdrop-blur-sm">
+          AES-256 GCM ENCRYPTED
+        </span>
+        <span className="px-2.5 py-1 rounded-md border border-[#2B2D36] bg-[#141519]/70 text-[#F2BD91] backdrop-blur-sm">
+          CLOUD VAULT
+        </span>
+      </div>
+
+      <div className="absolute bottom-7 left-8 hidden xl:flex items-center gap-2 text-[11px] font-mono text-[#6E707A] pointer-events-none">
+        <ShieldCheck className="w-3.5 h-3.5 text-[#5CE095]" />
+        <span>ZERO-CREDENTIAL STORAGE ARCHITECTURE</span>
+      </div>
+
+      <div className="absolute bottom-7 right-8 hidden xl:flex items-center gap-2 text-[11px] font-mono text-[#6E707A] pointer-events-none">
+        <Lock className="w-3.5 h-3.5 text-[#F2BD91]" />
+        <span>BREVO 2FA DISPATCH // SECURE ENCLAVE</span>
+      </div>
+
+      {/* ====================================================================
+          5. FLOATING LUXURY FEATURE PILLS (CIRCUMSCRIBING THE LOGIN MODAL)
+         ==================================================================== */}
+      {/* Top Left Floating Pill */}
+      <div className="absolute top-[20%] left-[8%] hidden 2xl:flex items-center gap-3.5 px-4 py-3 rounded-2xl bg-[#141519]/80 border border-[#27282F] shadow-2xl backdrop-blur-md pointer-events-none animate-float-slow">
+        <div className="w-9 h-9 rounded-xl bg-[#23201C] border border-[#3E3127] flex items-center justify-center text-[#F2BD91]">
+          <ShieldCheck className="w-4 h-4" />
+        </div>
+        <div>
+          <div className="text-xs font-semibold text-[#F5F3EF]">Zero-Credential Cards</div>
+          <div className="text-[10px] text-[#A5A5A5]">No card numbers or PINs stored</div>
+        </div>
+      </div>
+
+      {/* Bottom Left Floating Pill */}
+      <div className="absolute bottom-[20%] left-[10%] hidden 2xl:flex items-center gap-3.5 px-4 py-3 rounded-2xl bg-[#141519]/80 border border-[#27282F] shadow-2xl backdrop-blur-md pointer-events-none">
+        <div className="w-9 h-9 rounded-xl bg-[#16271D] border border-[#234A35] flex items-center justify-center text-[#5CE095]">
+          <TrendingUp className="w-4 h-4" />
+        </div>
+        <div>
+          <div className="text-xs font-semibold text-[#F5F3EF]">50/30/20 &amp; Card Balances</div>
+          <div className="text-[10px] text-[#A5A5A5]">Live financial health gauge</div>
+        </div>
+      </div>
+
+      {/* Top Right Floating Pill */}
+      <div className="absolute top-[22%] right-[8%] hidden 2xl:flex items-center gap-3.5 px-4 py-3 rounded-2xl bg-[#141519]/80 border border-[#27282F] shadow-2xl backdrop-blur-md pointer-events-none">
+        <div className="w-9 h-9 rounded-xl bg-[#241E1A] border border-[#422C1D] flex items-center justify-center text-[#F2BD91]">
+          <Zap className="w-4 h-4" />
+        </div>
+        <div>
+          <div className="text-xs font-semibold text-[#F5F3EF]">Auto-Pay Radar</div>
+          <div className="text-[10px] text-[#A5A5A5]">28-Day &amp; custom telecom cycles</div>
+        </div>
+      </div>
+
+      {/* Bottom Right Floating Pill */}
+      <div className="absolute bottom-[22%] right-[10%] hidden 2xl:flex items-center gap-3.5 px-4 py-3 rounded-2xl bg-[#141519]/80 border border-[#27282F] shadow-2xl backdrop-blur-md pointer-events-none">
+        <div className="w-9 h-9 rounded-xl bg-[#182132] border border-[#253754] flex items-center justify-center text-[#7FB2FF]">
+          <Calendar className="w-4 h-4" />
+        </div>
+        <div>
+          <div className="text-xs font-semibold text-[#F5F3EF]">Warranty Expiry Radar</div>
+          <div className="text-[10px] text-[#A5A5A5]">Automated claims protection</div>
+        </div>
+      </div>
+
+      {/* ====================================================================
+          6. THE KEEPER VAULT AUTH MODAL (TITANIUM GLASSMORPHISM)
+         ==================================================================== */}
+      <div className="w-full max-w-md bg-[#131417]/92 border border-[#27282F] rounded-2xl shadow-[0_25px_70px_rgba(0,0,0,0.85),0_0_40px_rgba(242,189,145,0.06)] p-6 sm:p-8 relative z-10 backdrop-blur-2xl before:absolute before:inset-x-0 before:top-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-[#F2BD91]/50 before:to-transparent">
         {/* Keeper Vault Header */}
         <div className="flex flex-col items-center text-center mb-6">
-          <div className="w-14 h-14 rounded-2xl bg-[#1D1E23] border border-[#2B2C33] flex items-center justify-center text-[#F2BD91] shadow-lg mb-3">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-b from-[#24211D] to-[#17181D] border border-[#3E3228] flex items-center justify-center text-[#F2BD91] shadow-[0_4px_20px_rgba(242,189,145,0.15)] mb-3">
             <Package className="w-7 h-7" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-[#F5F3EF]">Keeper Vault</h1>
